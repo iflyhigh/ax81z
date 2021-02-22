@@ -25,7 +25,9 @@ All these memory buffers are documented in TX81Z service manual however user-lev
 OPZ uses exactly the same physical layout and very similar register map as YM2151/OPM. Electrical characteristics are not published but I believe they are the same to YM2151/OPM.
 
 ### YM2414B/OPZ pinout
+
 Tilde (~) used to show pins with LOW active state
+
 |Pin|Usage|Comment|
 |-----|-----|-----|
 |1|GND|Shortcut with 11|
@@ -35,3 +37,14 @@ Tilde (~) used to show pins with LOW active state
 |5|~WR|Write to IC|
 |6|~RD|Read from IC|
 |7|~CS|Chip select|
+|8|CT1|Control terminal 1, unused|
+|9|CT2|Control terminal 2, unused|
+|10|D0|Data bus bit 0|
+|11|GND|Shortcut with 1|
+|12-18|D1-D7|Data bus bits 1-7|
+|19|SH2|Sample-and-hold port 2 to DAC IC YM3012 pin 6|
+|20|SH1|Sample-and-hold port 1 to DAC IC YM3012 pin 5|
+|21|SO|Serial output to DAC IC YM3012 pin 4|
+|22|Vcc|+5V power|
+|23|Ø1|Clock output to DAC IC YM3012 pin 2|
+|24|ØM|Clock input 3.579545MHz|
