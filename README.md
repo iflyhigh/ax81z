@@ -27,7 +27,7 @@ OPZ uses exactly the same physical layout and very similar register map as YM215
 ### YM2414B/OPZ pinout
 Tilde (~) used to show pins with LOW active state
 |Pin|Usage|Comment|
-|---|---|---|
+|-----|-----|-----|
 |1|GND|Shortcut with 11|
 |2|~IRQ||
 |3|~IC|Reset IC|
@@ -39,7 +39,7 @@ Tilde (~) used to show pins with LOW active state
 |9|CT2|Control terminal 2, unused|
 |10|D0|Data bus bit 0|
 |11|GND|Shortcut with 1|
-|12-18|Data bus bits 1-7|
+|12-18|D1-D7|Data bus bits 1-7|
 |19|SH2|Sample-and-hold port 2 to DAC IC YM3012 pin 6|
 |20|SH1|Sample-and-hold port 1 to DAC IC YM3012 pin 5|
 |21|SO|Serial output to DAC IC YM3012 pin 4|
