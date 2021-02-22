@@ -20,6 +20,6 @@ TX81Z has several memory buffers of interest:
 
 All these memory buffers are documented in TX81Z service manual however user-level documentation is somewhat not very clear and a bit hard to match service manual so I've made attempt to document everything as complete and clear as possible.
 
-##YM2414B/OPZ manual
+## YM2414B/OPZ manual
 
 OPZ uses exactly the same layout and very similar register map as YM2151/OPM.
