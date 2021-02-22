@@ -11,4 +11,10 @@ Yamaha TX81Z FM Tone Generator is built around Yamaha YM2414B (aka OPZ) sound ge
 |0x4000 - 0x5FFF|LCD|
 |0x6000 - 0x7FFF|RAM|
 
-So, when CPU P63 is HIGH (and it is set to HIGH during bootup), any address in range 0x8000 - 0xFFFF will go directly to ROM because A15 is set to HIGH thus enabling ROM IC during reads (RD is active). In case P63 is high but address on a bus is 0x7FFF or below, the A15 will go LOW thus disabling CE on ROM IC and address decoder will do it's work enabling OPZ or LCD or RAM depending on address range. However if address is 0x8000 or higher *and* P63 is low the ROM IC will be active but the reads will be performed from lower half of ROM IC - because ROM IC's A15 input is connected to CPU's P63 (which is LOW). Fortunately there's not a lot of code in lower half of ROM as disassembling it is a bit tricky. TX81Z schematics is also uploaded.
+So, when CPU P63 is HIGH (and it is set to HIGH during bootup), any address in range 0x8000 - 0xFFFF will go directly to ROM because A15 is set to HIGH thus enabling ROM IC during reads (RD is active). In case P63 is high but address on a bus is 0x7FFF or below, the A15 will go LOW thus disabling CE on ROM IC and address decoder will do it's work enabling OPZ or LCD or RAM depending on address range. However if address is 0x8000 or higher *and* P63 is low the ROM IC will be active but the reads will be performed from lower half of ROM IC - because ROM IC's A15 input is connected to CPU's P63 (which is LOW). Fortunately there's not a lot of code in lower half of ROM as disassembling it is a bit tricky.
+
+TX81Z has several memory buffers of interest: 
+* VMEM and AMEM are used to store patch (i.e. instrument) data as it is loaded from media (ROM or tape). VMEM data is common to DX100 and similar synths using YM2164 (aka OPP, the derivative of YM2151/OPM), AMEM holds parameters unique to OPZ.
+* VCED and ACED are used to store patch data in "uncompressed" format suitable for editing. Also all values written to OPZ from VCED/ACED and not from VMEM/AMEM.
+* PMEM is used to load so called "performance data", i.e. multi-instrument setups.
+* PCED is "uncompressed" PMEM.
