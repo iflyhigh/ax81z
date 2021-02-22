@@ -70,4 +70,5 @@ OPZ register map is very similar to OPM.
 |`0x18`|LFRQ1|LFRQ1|LFRQ1|LFRQ1|LFRQ1|LFRQ1|LFRQ1|LFRQ1|LFO#1 frequency|Normally used LFO. See also register `0x16` comments|
 |`0x19`|`0` for AMD1 <br>`1` for PMD1|xMD1|xMD1|xMD1|xMD1|xMD1|xMD1|xMD1|AMD1 or PMD1|Used with LFO1. See also register `0x17` comments|
 |`0x1A`|||||||||Unknown|Not referenced|
-|`0x1B`|CT|CT|SY2|SY1|LW2|LW2|LW1|LW1|Control Terminal, LFO#2 Sync, LFO#1 Sync, LFO#2 Waveform, LFO#1 Waveform|CT is not used. LFO Sync (1-bit value for each LFO) means 'restart LFO on Key On event'. LFO Waveform is 2-bit value, 0x00 is saw-up, 0x01 is square, 0x02 is triangle, 0x03 is sample&hold/noise|
+|`0x1B`|CT|CT|SY2|SY1|LW2|LW2|LW1|LW1|Control Terminal, LFO#2 Sync, LFO#1 Sync, LFO#2 Waveform, LFO#1 Waveform|CT is not used. LFO Sync (1-bit value for each LFO) means 'restart LFO on Key On event'. LFO Waveform is 2-bit value, 0x00 is saw-up, 0x01 is square, 0x02 is triangle, 0x03 is sample&hold i.e. noise|
+|`0x1C`-`0x1F`|||||||||Unknown|Not referenced|
