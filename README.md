@@ -65,5 +65,5 @@ OPZ register map is very similar to OPM.
 |`0x11`-`0x13`|||||||||Unknown|Not referenced|
 |`0x14`|||||||||Timer control|Set to `0x70` upon startup, DX100 dies the same|
 |`0x15`|||||||||Timer control|Set to `0x01` upon startup, DX100 dies the same|
-|`0x16`|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFO2 frequency|TX81Z only uses LFO2 in performance mode. This allows to have 2 instruments in one performance with independent LFOs|
-|`0x17`|`0` for PMD<br>`1` for AMD||||||||Timer A related||
+|`0x16`|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFO#2 frequency|TX81Z only uses LFO#2 in performance mode. This allows to have 2 instruments in one performance with independent LFOs|
+|`0x17`|`0` for AMD2, `1` for PMD2|xMD2|xMD2|xMD2|xMD2|xMD2|xMD2|xMD2|AMD2 or PMD2|Actual amplitude modulation depth and phase modulation depth for LFO#2. Used when LFO#2 is used. Derived from VCED AMD and PMD. Values are calculated from basic values present in VCED, MIDI controller values (Modulation Wheel, Breath and Foot Controllers) and LFO delay value. LFO delay only affects basic AMD/PMD. |
