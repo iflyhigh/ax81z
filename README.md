@@ -10,11 +10,11 @@ Yamaha TX81Z FM Tone Generator is built around Yamaha YM2414B (aka OPZ) sound ge
 |0x4000 - 0x5FFF|LCD|
 |0x6000 - 0x7FFF|RAM|
 
-So, when CPU P63 is HIGH (and it is set to HIGH during bootup), any address in range 0x8000 - 0xFFFF will go directly to ROM because A15 is set to HIGH thus enabling ROM IC during reads (RD is active). In case P63 is high but address on a bus is 0x7FFF or below, the A15 will go LOW thus disabling CE on ROM IC and address decoder will do it's work enabling OPZ or LCD or RAM depending on address range. However if address is 0x8000 or higher *and* P63 is low the ROM IC will be active but the reads will be performed from lower half of ROM IC - because ROM IC's A15 input is connected to CPU's P63 (which is LOW). Fortunately there's not a lot of code in lower half of ROM as disassembling it is a bit tricky.
+So, when CPU P63 is HIGH (and it is set to HIGH during bootup), any address in range 0x8000 - 0xFFFF will go directly to ROM because A15 is set to HIGH thus enabling ROM IC during reads (RD is active). In case P63 is high but address on a bus is 0x7FFF or below, the A15 will go LOW thus disabling CE on ROM IC and address decoder will do it's work enabling OPZ or LCD or RAM depending on address range. However if address is 0x8000 or higher *and* P63 is low the ROM IC will be active but the reads will be performed from lower half of ROM IC - because ROM IC's A15 input is connected to CPU's P63 (which is LOW). Fortunately there's not a lot of code in lower half of ROM as disassembling it was a bit tricky.
 
 TX81Z has several memory buffers of interest: 
 * VMEM and AMEM are used to store patch (i.e. instrument) data as it is loaded from media (ROM or tape). VMEM data is common to DX100 and similar synths using YM2164 (aka OPP, the derivative of YM2151/OPM), AMEM holds parameters unique to OPZ.
-* VCED and ACED are used to store patch data in "uncompressed" format suitable for editing. Also all values written to OPZ from VCED/ACED and not from VMEM/AMEM.
+* VCED and ACED are used to store patch data in "uncompressed" format suitable for editing. Also all values written to OPZ from VCED/ACED and not from VMEM/AMEM. VCED has ability to switch individual operator on/off but this is not stored in VMEM.
 * PMEM is used to load so called "performance data", i.e. multi-instrument setups.
 * PCED is "uncompressed" editable PMEM.
 
@@ -73,3 +73,4 @@ OPZ register map is very similar to OPM.
 |`0x1B`|CT|CT|SY2|SY1|LW2|LW2|LW1|LW1|Control Terminal, LFO#2 Sync, LFO#1 Sync, LFO#2 Waveform, LFO#1 Waveform|CT is not used. LFO Sync (1-bit value for each LFO) means 'restart LFO on Key On event'. LFO Waveform is 2-bit value, 0x00 is saw-up, 0x01 is square, 0x02 is triangle, 0x03 is sample&hold i.e. noise|
 |`0x1C`-`0x1F`|||||||||Unknown|Not referenced|
 |`0x20`-`0x27`|R|?|FBL|FBL|FBL|ALG|ALG|ALG|Right output enable, Unknown, Feedback Level, Algorithm for channels 0-7|OPM uses R and L (unknown here) for enabling sound output on right and left outputs. OPZ is different, logic is unclear so far. During Key On one needs to set R to 1 and Unknown to 0, and reverse values upon Key Off. Feedback Level is actually Operator #1 self-feedback, VCED parameter #53 as-is. Algorithm is VCED parameter #52 as-is|
+|`0x28`-`0x2F`|-|KC|KC|KC|KC|KC|KC|KC|Key Code|As OPM does, OPZ also represents each note as `Octave number + Note in octave number`. There are 8 octaves each having 12 notes from C# to C. Note numbers in octave are `0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14`, octave numbers are `0 to 7`. Octave `#4` and note `#10` is MIDI note `69` (A4 440 Hz) (when MUL is set to `1`).|
