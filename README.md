@@ -47,4 +47,10 @@ Tilde (~) used to show pins with LOW active state
 |21|SO|Serial output to DAC IC YM3012 pin 4|
 |22|Vcc|+5V power|
 |23|Ø1|Clock output to DAC IC YM3012 pin 2|
-|24|ØM|Clock input 3.579545MHz|
+|24|ØM|Clock input 3.579545 MHz|
+
+### YM2414B/OPZ register map
+
+|Address|b7|b6|b5|b4|b3|b2|b1|b0|Comment|
+|---:|----------|---|
+|0x00||Channel 0 volume|
