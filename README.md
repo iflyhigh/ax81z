@@ -29,4 +29,4 @@ OPZ uses exactly the same physical layout and very similar register map as YM215
 |---|---|---|
 |1|GND|Shortcut with 11|
 |2|IRQ||
-|3|I1C1|Reset|
+|3|◌̅I◌̅C|Reset|
