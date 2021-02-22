@@ -22,4 +22,11 @@ All these memory buffers are documented in TX81Z service manual however user-lev
 
 ## YM2414B/OPZ manual
 
-OPZ uses exactly the same layout and very similar register map as YM2151/OPM.
+OPZ uses exactly the same physical layout and very similar register map as YM2151/OPM. Electrical characteristics are not published but I believe they are the same to YM2151/OPM.
+
+### YM2414B/OPZ pinout
+|Pin|Usage|Comment|
+|---|---|---|
+|1|GND|Shortcut with 11|
+|2|IRQ||
+|3|IC|Reset|
