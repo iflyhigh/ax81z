@@ -56,7 +56,7 @@ OPZ register map is very similar to OPM.
 |Address|b7|b6|b5|b4|b3|b2|b1|b0|Comment|Explanation|
 |---:|---|---|---|---|---|---|---|---|---------|---------------------------------|
 |0x00-0x07|VOL|VOL|VOL|VOL|VOL|VOL|VOL|VOL|Channel 0-7 volume|Unclear and unused|
-|0x08|-|OP|OP|OP|OP|CH|CH|CH|Key ON/OFF|4 higher bits are operators, 3 lower - channel number. Key On event in OPZ is triggered when any OP for specific channel changes it's value from 0 to 1, Key Off triggered when operator changes value from 1 to 0. Normally all operators are running and there is no ability to switch operators on/off in VMEM/AMEM, however VCED has parameter 93 that allows to turn on/off specific operator but it is not documented and no menu item is present in TX81Z to change this setting. In other words, to set Key On for a channel one needs to write 0x78 \\ channel_number to this register, to set Key Off write 0x00\|channel_number.|
+|0x08|-|OP|OP|OP|OP|CH|CH|CH|Key ON/OFF|4 higher bits are operators, 3 lower - channel number. Key On event in OPZ is triggered when any OP for specific channel changes it's value from 0 to 1, Key Off triggered when operator changes value from 1 to 0. Normally all operators are running and there is no ability to switch operators on/off in VMEM/AMEM, however VCED has parameter 93 that allows to turn on/off specific operator but it is not documented and no menu item is present in TX81Z to change this setting. In other words, to set Key On for a channel one needs to write `0x78` to OP-part of this register, to set Key Off write `0x00`|
 
 
 
