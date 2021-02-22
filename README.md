@@ -32,11 +32,11 @@ Tilde (~) used to show pins with LOW active state
 |-----|-----|-----|
 |1|GND|Shortcut with 11|
 |2|~IRQ||
-|3|~IC|Reset IC|
-|4|A0|A0 low means data on data bus is register address, A0 high means it is register data. Connected to CPU address bus bit 0 (A0)|
-|5|~WR|Write to IC|
-|6|~RD|Read from IC|
-|7|~CS|Chip select|
+|3|~IC|Reset IC when LOW|
+|4|A0|A0 LOW means data on data bus is register address, A0 HIGH means it is register data. Connected to CPU address bus bit 0 (A0)|
+|5|~WR|Write to IC when LOW|
+|6|~RD|Read from IC when LOW|
+|7|~CS|Chip select when LOW|
 |8|CT1|Control terminal 1, unused|
 |9|CT2|Control terminal 2, unused|
 |10|D0|Data bus bit 0|
@@ -51,6 +51,13 @@ Tilde (~) used to show pins with LOW active state
 
 ### YM2414B/OPZ register map
 
-|Address|b7|b6|b5|b4|b3|b2|b1|b0|Comment|
-|---:|----------|---|
-|0x00||Channel 0 volume|
+OPZ register map is very similar to OPM.
+
+|Address|b7|b6|b5|b4|b3|b2|b1|b0|Comment|Explanation|
+|---:|---|---|---|---|---|---|---|---|---------|---------------------------------|
+|0x00-0x07|VOL|VOL|VOL|VOL|VOL|VOL|VOL|VOL|Channel 0-7 volume|Unclear and unused|
+|0x08|-|OP|OP|OP|OP|CH|CH|CH|Key ON/OFF|4 higher bits are operators, 3 lower - channel number. Key ON event in OPZ is triggered when any OP for specific channel changes it's value from 0 to 1. Normally all operators are running and there is no ability to use 2-operator synthesis in VMEM/AMEM, however VCED has parameter 93 that allows to turn on/off specific operator.|
+
+
+
+|...|
