@@ -63,7 +63,7 @@ OPZ register map is very similar to OPM.
 |`0x0F`|NE|-|-|-|NFRQ|NFRQ|NFRQ|NFRQ|Noise enable + noise frequency|OPM artifact. Not referenced|
 |`0x10`|||||||||Timer A related?|Set to `0x00` upon startup|
 |`0x11`-`0x13`|||||||||Unknown|Not referenced|
-|`0x14`|||||||||Timer A related||
-|`0x10`|||||||||Timer A related||
-|`0x10`|||||||||Timer A related||
-|`0x10`|||||||||Timer A related||
+|`0x14`|||||||||Timer control|Set to `0x70` upon startup, DX100 dies the same|
+|`0x15`|||||||||Timer control|Set to `0x01` upon startup, DX100 dies the same|
+|`0x16`|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFRQ2|LFO2 frequency|TX81Z only uses LFO2 in performance mode. This allows to have 2 instruments in one performance with independent LFOs|
+|`0x17`|`0` for PMD<br>`1` for AMD||||||||Timer A related||
