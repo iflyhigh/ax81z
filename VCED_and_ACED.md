@@ -5,8 +5,8 @@
 VCED consists of 2 parts: operator-specific parameters and global ones. Each operator has 13 specific parameters. They repeat in the same order for each operator. Operator order in VCED is `4-3-2-1`, while in VMEM and OPZ operators are ordered `4-2-3-1`. After 52-byte operator-specific part there is a section of global parameters.
 
 |Number|Number hex|Short name|Name|Data range|Comment|
-|---|---|---|---|---|
-|||||Operator 4|
+|---|---|---|---|---|---|
+||||||Operator 4|
 |0|0x00|AR|Attack Rate|0-31|Envelope generator attack rate. Value of AR goes as-is to OPZ register `0x80`, 5 lower bits|
 |1|0x01|D1R|Decay 1 Rate|0-31|Envelope generator decay 1 rate. Value of D1R goes as-is to OPZ register `0xA0`, 5 lower bits|
 |2|0x02|D2R|Decay 2 Rate|0-31|Envelope generator decay 2 rate. Value of D2R goes as-is to OPZ register `0xC0`, 5 lower bits when selector bit #6 has value of `0`|
