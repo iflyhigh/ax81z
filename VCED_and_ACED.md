@@ -22,11 +22,14 @@ VCED consists of 2 parts: operator-specific parameters and global ones. Each ope
 |12|0x0B|DET|Detune|0-6|Center value is 3. Value of DET is used only in Ratio mode, it is processed with the following logic `(DET<3)?(7-DET):(DET-3)` and goes to OPZ register `0x40`, 3 upper bits when selector bit 7 is set to `0`|
 ||||||Operator 3|
 |13|0x0C||||...|
+|...|...|...|...|...|...|
 |25|0x19||||...|
 ||||||Operator 2|
 |26|0x1A||||...|
+|...|...|...|...|...|...|
 |38|0x26||||...|
 ||||||Operator 1|
 |39|0x27||||...|
+|...|...|...|...|...|...|
 |51|0x33||||...|
 |0|0x00|AR|Attack Rate|0-31|Envelope generator attack rate. Value of AR goes as-is to OPZ register `0x80`, 5 lower bits|
