@@ -32,4 +32,7 @@ VCED consists of 2 parts: operator-specific parameters and global ones. Each ope
 |39|0x27||||...|
 |...|...|...|...|...|...|
 |51|0x33||||...|
-|0|0x00|AR|Attack Rate|0-31|Envelope generator attack rate. Value of AR goes as-is to OPZ register `0x80`, 5 lower bits|
+|52|0x34|ALG|Algorithm|0-7|Algorithm of operator connections. Value of ALG goes as-is to OPZ register `0x20`, 3 lower bits. Also affects Total Level OPZ register `0x60`, math is explained separately|
+|53|0x35|FBL|Feedback Level|0-7|Self-feedback level for operator 1. Value of FBL goes as-is to OPZ register `0x20`, bits 3-5|
+|54|0x36|LFOFREQ|LFO Frequency|0-99|LFO frequency. Manual calls it 'LFO Speed'. Value is processed using exponential function in case of sample&hold LFO waveform or lookup table in other cases and goes to OPZ register `0x16` (LFO#2) or `0x18` (LFO#1)|
+|55|0x37|LFODEL|LFO Delay|0-99|Non-zero value will cause basic (initial) AMD and PMD to start growing from zero up to desired value. MIDI CC changes are not affected by LFO delay, i.e. rotating modulation wheel with non-zero sensitivity (VCED parameters `#60` and `#61` for modulation wheel) will cause LFO applied (AMD and PMD values written to OPZ register `0x17` or `0x19`) immediately proportional to modulation wheel position. LFO delay itself is independent from MIDI CCs and will grow up to desired value once the key is still pressed. Math is explained separately|
