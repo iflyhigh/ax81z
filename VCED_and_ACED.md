@@ -33,11 +33,11 @@ VCED consists of 2 parts: operator-specific parameters and global ones. Each ope
 |...|...|...|...|...|...|
 |51|0x33||||...|
 |52|0x34|ALG|Algorithm|0-7|Algorithm of operator connections. Value of ALG goes as-is to OPZ register `0x20`, 3 lower bits. Also affects Total Level OPZ register `0x60`, math is explained separately|
-|53|0x35|FBL|Feedback Level|0-7|Self-feedback level for operator 4. Value of FBL goes as-is to OPZ register `0x20`, bits 3-5|
+|53|0x35|FBL|Feedback Level|0-7|Self-feedback level for operator 4. Value of FBL goes as-is to OPZ register `0x20`, bits `3-5`|
 |54|0x36|LFOFREQ|LFO Frequency|0-99|LFO frequency. Manual calls it 'LFO Speed'. Value is processed using exponential function in case of sample&hold LFO waveform or lookup table in other cases and goes to OPZ register `0x16` (LFO#2) or `0x18` (LFO#1)|
 |55|0x37|LFODEL|LFO Delay|0-99|Non-zero value will cause basic (initial) AMD and PMD to start growing from zero up to desired value. MIDI CC changes are not affected by LFO delay, i.e. rotating modulation wheel with non-zero sensitivity (VCED parameters `#60` and `#61` for modulation wheel) will cause LFO applied (AMD and PMD values written to OPZ register `0x17` or `0x19`) immediately proportional to modulation wheel position. LFO delay itself is independent from MIDI CCs and will grow up to desired value once the key is still pressed. Math is explained separately|
 |56|0x38|PMD|Pitch Modulation Depth|0-99|Basic (initial) amount of LFO modulation applied to all operators' pitch. Value is processed using exponential function, multiplied by current LFO delay effect (255 in case of no/expired delay). Then modulation wheel, breath controller and foot controller adjustments are applied and added to basic PMD. Finally the value is divied by 2 and goes to OPZ register `0x17` or `0x19` with bit 7 set to `1`. Pitch Modulation Sensitivity (VCED parameter `#60`) does no affect this value|
-|57|0x39|AMD|Amplitude Modulation Depth|0-99|Basic (initial) amount of LFO modulation applied to all operators' amplitude. Value is processed using exponential function, multiplied by current LFO delay effect (255 in case of no/expired delay). Then modulation wheel, breath controller and foot controller adjustments are applied and added to basic AMD. Finally the value is substracted from `0xff` and result is used as an index in lookup table (same lookup table is used for non-noise LFO frequency calculations). Value from lookup table goes to OPZ register `0x17` or `0x19` with bit 7 set to `0`. Amplitude Modulation Sensitivity (VCED parameter `#61`) or Amplitude Modulation Enable (VCED parameter `#8`) do no affect this value|
+|57|0x39|AMD|Amplitude Modulation Depth|0-99|Basic (initial) amount of LFO modulation applied to all operators' amplitude. Value is processed using exponential function, multiplied by current LFO delay effect (255 in case of no/expired delay). Then modulation wheel, breath controller and foot controller adjustments are applied and added to basic AMD. Finally the value is substracted from `0xff` and result is used as an index in lookup table (same lookup table is used for non-noise LFO frequency calculations). Value from lookup table goes to OPZ register `0x17` or `0x19` with bit `7` set to `0`. Amplitude Modulation Sensitivity (VCED parameter `#61`) or Amplitude Modulation Enable (VCED parameter `#8`) do no affect this value|
 |58|0x3A|LFOSY|LFO Sync|0-1|Value of `1` will cause LFO to be restarted upon Key On. Value goes as-is to OPZ register `0x1B` bits `4` or `5`|
 |59|0x3B|LFOWF|LFO Waveform|0-3|Saw up, square, triangle or sample&hold (noise). Value goes as-is to OPZ register `0x1B` bits `0` and `1` or `2` and `3`|
 |60|0x3C|PMS|Pitch Modulation Sensitivity|0-7|Determines all operators' pitch sensitivity to LFO modulation applied in PMD register. Value goes as-is to OPZ register `0x38` bits `4` to `6`|
@@ -53,8 +53,8 @@ VCED consists of 2 parts: operator-specific parameters and global ones. Each ope
 |70|0x46|CHOR|Chorus|0-1|Unused|
 |71|0x47|MWPE|Modulation Wheel Pitch Effect|0-99|Determines amount added to basic (initial) PMD by modulation wheel. The value is processed with exponential function then multiplied by 2 then multiplied by MIDI CC#1 value (0-127). Result is added to basic PMD|
 |72|0x48|MWAE|Modulation Wheel Amplitude Effect|0-99|Determines amount added to basic (initial) AMD by modulation wheel. The value is processed with exponential function then multiplied by 2 then multiplied by MIDI CC#1 value (0-127). Result is added to basic AMD|
-|73|0x49|BCPE|Breath Controller Pitch Effect|0-99|Same as MWPE but for breath controller. MIDI CC#2|
-|74|0x4A|BCAE|Breath Controller Amplitude Effect|0-99|Same as MWAE but for breath controller. MIDI CC#2|
+|73|0x49|BCPE|Breath Controller Pitch Effect|0-99|Same as MWPE (VCED parameter `#71`) but for breath controller. MIDI CC#2|
+|74|0x4A|BCAE|Breath Controller Amplitude Effect|0-99|Same as MWAE (VCED parameter `#72`) but for breath controller. MIDI CC#2|
 |73|0x49|BCPB|Breath Controller Pitch Bias|0-99|Center value is `50` ???|
 |74|0x4A|BCEGB|Breath Controller EG Bias|0-99|???|
 |75|0x4B|NAM0|Voice name char 0|32-127||
@@ -64,22 +64,28 @@ VCED consists of 2 parts: operator-specific parameters and global ones. Each ope
 
 ## ACED buffer
 
-ACED buffer is located right after VCED in TX81Z memory so firmware uses this to have unified addressing.
+ACED buffer is located right after VCED in TX81Z memory so firmware uses this to have unified addressing. As discussed above, VCED physically is 88 bytes long. ACED also consists of 2 parts: operator-specific parameters and global ones. Each operator has 5 specific parameters. They repeat in the same order for each operator. Operator order in ACED is also `4-3-2-1`, like in VCED. After 20-byte operator-specific part there is a section of global parameters. 
 
 |Number|Number hex|Short name|Name|Data range|Comment|
 |---|---|---|---|---|---|
 ||||||Operator 4|
-|0|0x00|AR|Attack Rate|0-31|Envelope generator attack rate. Value of AR goes as-is to OPZ register `0x80`, 5 lower bits|
+|0|0x00|FIX|Fixed Mode|0-1|Enable Fixed mode. Value of AR goes as-is to OPZ register `0x80` bit 5|
+|1|0x01|FXRG|Fixed Frequency Range|0-7|Fixed frequency range for Fixed mode. Value of FXRG goes as-is to OPZ register `0x40` bits `5-6` when selector bit `7` is `0`|
+|2|0x02|FINE|Frequency Fine|0-15|Frequency fine tuning both for Ratio and Fixed modes. Value of FINE goes as-is to OPZ register `0x40` 4 lower bits when selector bit `7` is `1`|
+|3|0x03|OWF|Operator Waveform|0-7|Value of OWF goes as-is to OPZ register `0x40` bits `4-6` when selector bit `7` is `1`|
+|4|0x04|EGBS|EG Bias Shift|0-3|EValue of EGBS goes as-is to OPZ register `0xC0` 2 upper bits when selector bit `5` is `1`|
 ||||||Operator 3|
-|13|0x0C||||...|
+|5|0x05||||...|
 |...|...|...|...|...|...|
-|25|0x19||||...|
+|9|0x09||||...|
 ||||||Operator 2|
-|26|0x1A||||...|
+|10|0x0A||||...|
 |...|...|...|...|...|...|
-|38|0x26||||...|
+|14|0x0E||||...|
 ||||||Operator 1|
-|39|0x27||||...|
+|15|0x0F||||...|
 |...|...|...|...|...|...|
-|51|0x33||||...|
-|52|0x34|ALG|Algorithm|0-7|Algorithm of operator connections. Value of ALG goes as-is to OPZ register `0x20`, 3 lower bits. Also affects Total Level OPZ register `0x60`, math is explained separately|
+|19|0x13||||...|
+|20|0x14|REV|Reverb Rate|0-7|Value of REV goes as-is to OPZ register `0xC0` 3 lower bits when selector bit `5` is `1`|
+|21|0x15|FCPE|Foot Controller Pitch Effect|0-99|Same as MWPE (VCED parameter `#71`) and BCPE (VCED parameter `#73`) but for foot controller. MIDI CC#4|
+|22|0x16|FCAE|Foot Controller Amplitude Effect|0-99|Same as MWAE (VCED parameter `#72`) and BCAE (VCED parameter `#74`) but for foot controller. MIDI CC#4|
