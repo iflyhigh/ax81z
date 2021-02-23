@@ -2,7 +2,7 @@
 
 ## VCED buffer
 
-VCED consists of 2 parts: operator-specific parameters and global ones. Each operator has 13 specific parameters. They repeat in the same order for each operator. Operator order in VCED is `4-3-2-1`, while in VMEM and OPZ operators are ordered `4-2-3-1`. After 52-byte operator-specific part there is a section of global parameters.
+VCED consists of 2 parts: operator-specific parameters and global ones. Each operator has 13 specific parameters. They repeat in the same order for each operator. Operator order in VCED is `4-3-2-1`, while in VMEM and OPZ operators are ordered `4-2-3-1`. After 52-byte operator-specific part there is a section of global parameters. Parameters `#87` to `#92` are not actually present in TX81Z VCED memory structure so parameter `#93` (Operator enable flag) is actually parameter `#87`.
 
 |Number|Number hex|Short name|Name|Data range|Comment|
 |---|---|---|---|---|---|
@@ -60,3 +60,26 @@ VCED consists of 2 parts: operator-specific parameters and global ones. Each ope
 |75|0x4B|NAM0|Voice name char 0|32-127||
 |...|...|...|...|...||
 |86|0x56|NAM9|Voice name char 9|32-127||
+|87|0x57|OPE|Operator enable|0-15|4 bits, each enables (`1`) or disables (`0`) a single operator|
+
+## ACED buffer
+
+ACED buffer is located right after VCED in TX81Z memory so firmware uses this to have unified addressing.
+
+|Number|Number hex|Short name|Name|Data range|Comment|
+|---|---|---|---|---|---|
+||||||Operator 4|
+|0|0x00|AR|Attack Rate|0-31|Envelope generator attack rate. Value of AR goes as-is to OPZ register `0x80`, 5 lower bits|
+||||||Operator 3|
+|13|0x0C||||...|
+|...|...|...|...|...|...|
+|25|0x19||||...|
+||||||Operator 2|
+|26|0x1A||||...|
+|...|...|...|...|...|...|
+|38|0x26||||...|
+||||||Operator 1|
+|39|0x27||||...|
+|...|...|...|...|...|...|
+|51|0x33||||...|
+|52|0x34|ALG|Algorithm|0-7|Algorithm of operator connections. Value of ALG goes as-is to OPZ register `0x20`, 3 lower bits. Also affects Total Level OPZ register `0x60`, math is explained separately|
