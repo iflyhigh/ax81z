@@ -6,4 +6,5 @@ VCED consists of 2 parts: operator-specific parameters and global ones. Each ope
 
 |Number|Number hex|Short name|Name|Data range|Comment|
 |---|---|---|---|---|
-|0|0x00|AR|Attack Rate|0-31|Operator 4 envelope generator attack rate|
+|0|0x00|AR|Attack Rate|0-31|Operator 4 envelope generator attack rate. Value of AR goes as-is to OPZ register `0x80`, 4 lower bits|
+|1|0x01|D1R|Decay 1 Rate|0-31|Operator 4 envelope generator decay 1 rate. Value of D1R goes as-is to OPZ register `0xA0`, 4 lower bits|
