@@ -73,7 +73,7 @@ ACED buffer is located right after VCED in TX81Z memory so firmware uses this to
 |1|0x01|FXRG|Fixed Frequency Range|0-7|Fixed frequency range for Fixed mode. Value of FXRG goes as-is to OPZ register `0x40` bits `5-6` when selector bit `7` is `0`|
 |2|0x02|FINE|Frequency Fine|0-15|Frequency fine tuning both for Ratio and Fixed modes. Value of FINE goes as-is to OPZ register `0x40` 4 lower bits when selector bit `7` is `1`|
 |3|0x03|OWF|Operator Waveform|0-7|Value of OWF goes as-is to OPZ register `0x40` bits `4-6` when selector bit `7` is `1`|
-|4|0x04|EGBS|EG Bias Shift|0-3|EValue of EGBS goes as-is to OPZ register `0xC0` 2 upper bits when selector bit `5` is `1`|
+|4|0x04|EGBS|EG Bias Shift|0-3|Value of EGBS goes as-is to OPZ register `0xC0` 2 upper bits when selector bit `5` is `1`|
 ||||||Operator 3|
 |5|0x05||||...|
 |...|...|...|...|...|...|
