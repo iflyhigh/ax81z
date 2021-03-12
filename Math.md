@@ -21,7 +21,7 @@ int expo(int in) {
 
 ### LFO
 
-LFO frequency (or speed as manual suggests) is calculated dependent on LFO waveform. For waveform `3` (Noise/Sample&Hold) the `expo()` function is used. For other waveforms the 256-byte lookup table accessed by `expo()` value of VCED parameter is used. 
+LFO frequency (or speed as manual suggests) is calculated dependent on LFO waveform. For waveform `3` (Noise/Sample&Hold) the `expo()` function is used. For other waveforms the 256-byte lookup table accessed by `expo()` value of VCED parameter is used (i.e. `lfo_frequency = c_table_LFO[expo(VCED_LFO_freq)]`). 
 
 ```
 int c_table_LFO[] =
