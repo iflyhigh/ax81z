@@ -14,9 +14,9 @@ ROM:9090                 rts
 This is equivalent to the following code:
 
 ```
-	int expo(int in) {
-		return 0xff & ((in * 165) >> 6);
-	}
+int expo(int in) {
+    return 0xff & ((in * 165) >> 6);
+}
 ```
 
 ### LFO
