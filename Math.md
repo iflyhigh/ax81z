@@ -1,8 +1,8 @@
-# TX81Z math
+## TX81Z math
 
-## Exponential function
+### Exponential function
 
-A lot of VCED parameters that take values from `0` to `99` are processed using exponential function ('expo()' for later use). TX81Z does not actually calculate the real exponent but rather uses approximation which is good at `[0..99]` range. The following M6800 assembly code is used to calculate assuming the VCED value is in `ACCA` register and result is also read from `ACCA` register:
+A lot of VCED parameters that take values from `0` to `99` are processed using exponential function ('expo()' for later use). TX81Z does not actually calculate the real exponent but rather uses approximation which is good at `[0..99]` range. The following M6800 assembly code is used to calculate this function assuming the VCED value is in `ACCA` register and result is also read from `ACCA` register:
 
 ```
 ROM:908B                 ldab    #$A5
@@ -19,11 +19,10 @@ This is equivalent to the following code:
 	}
 ```
 
-## LFO
+### LFO
 
-LFO frequency (or speed as manual suggests) is calculated dependent on LFO waveform. For waveform `3` (Noise/Sample&Hold) the `expo()` function is used. For other waveform the 256-byte lookup table accessed by `expo()` value of VCED parameter is used. 
+LFO frequency (or speed as manual suggests) is calculated dependent on LFO waveform. For waveform `3` (Noise/Sample&Hold) the `expo()` function is used. For other waveforms the 256-byte lookup table accessed by `expo()` value of VCED parameter is used. 
 
-### LFO lookup table
 ```
 int c_table_LFO[] =
 		{
@@ -56,3 +55,15 @@ int c_table_LFO[] =
 		};
 
 ```
+
+### Key code
+
+### PMD
+
+### AMD
+
+### KLS
+
+### KVS
+
+### TL
