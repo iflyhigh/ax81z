@@ -120,9 +120,9 @@ int c_table_KLS[] =
 ```
 ### KVS
 ```
-		int kvs = 1; // possible values 0..7
-		int kvsLow = 0xFF - (0xF0 | (kvs << 1));
-		int kvsHigh = 0xFF & (0x20 * kvs);
+int kvs = 1; // possible values 0..7
+int kvsLow = 0xFF - (0xF0 | (kvs << 1));
+int kvsHigh = 0xFF & (0x20 * kvs);
 ```
 ### TL
 ```
