@@ -91,7 +91,7 @@ int mw_effect_part = ((expo(pmd_mw_sensitivity) * mw_cc_value * 2) >> 8);
 int bc_effect_part = ((expo(pmd_bc_sensitivity) * bc_cc_value * 2) >> 8);
 int fc_effect_part = ((expo(pmd_fc_sensitivity) * fc_cc_value * 2) >> 8);
 int pmd = basic_part + mw_effect_part + bc_effect_part + fc_effect_part;
-if (pmd > 255) then { pmd = 127; }
+if (pmd > 255) { pmd = 127; }
 else { pmd = pmd >> 1; }
 ```
 ### AMD
