@@ -89,13 +89,12 @@ expo(XXX_amplitude_effect) * XXX_midi_cc_value * 2
 , then 8 higher bits are added to processed AMD value. If the resulting value exceeds 255 the value of 255 is used further. Next, the value is substracted from `0xff` and result is used as an index in `c_table_LFO` table. Finally, 7 higher bits are used as actual value written to OPZ register `0x17` or `0x19`. A pseudocode for this logic is as follows:
 ```
 int basic_part = ((expo(basic_amd) * lfo_delay_effect) >> 8);
-int mw_effect_part =  ((expo(amd_mw_sensitivity) * mw_cc_value * 2) >> 8);
-int bc_effect_part =  ((expo(amd_bc_sensitivity) * bc_cc_value * 2) >> 8);
-int fc_effect_part =  ((expo(amd_fc_sensitivity) * fc_cc_value * 2) >> 8);
+int mw_effect_part = ((expo(amd_mw_sensitivity) * mw_cc_value * 2) >> 8);
+int bc_effect_part = ((expo(amd_bc_sensitivity) * bc_cc_value * 2) >> 8);
+int fc_effect_part = ((expo(amd_fc_sensitivity) * fc_cc_value * 2) >> 8);
 int c_lfo_table_index = 0xff - (basic_part + mw_effect_part + bc_effect_part + fc_effect_part);
 if (c_lfo_table_index < 0) { c_lfo_table_index = 0; }		
 int amd = c_table_LFO_FREQ[c_lfo_table_index] >> 1;
-}
 ```
 ### KLS
 
