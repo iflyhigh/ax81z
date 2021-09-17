@@ -80,13 +80,24 @@ int c_table_KEYCODE[] =
 };
 ```				
 ### PMD
-
+Both PMD1 and PMD2 are processed in the same way. "Basic" value found in VCED parameter `#56` is processed by `expo()` function then multiplied by current LFO delay effect value (`255` if no LFO delay or delay has expired), then 8 higher bits are used for further calculations. Then processed Modulation Wheel Pitch Effect (VCED #71), Breath Controller Pitch Effect (VCED #73) and Foot Controller Pitch Effect (ACED #21) are added to previously processed PMD value. Each 'XXX Pitch Effect' is processed using the following formula:
+```
+expo(XXX_pitch_effect) * XXX_midi_cc_value * 2
+```
+, then 8 higher bits are added to processed PMD value. If the resulting value exceeds 255 the value of 255 is used further. 7 higher bits of resulting value are used as actual value written to OPZ register `0x17` or `0x19` with highest bit set to `1`. A pseudocode for this logic is as follows:
+```
+int basic_part = ((expo(basic_pmd) * lfo_delay_effect) >> 8);
+int mw_effect_part = ((expo(pmd_mw_sensitivity) * mw_cc_value * 2) >> 8);
+int bc_effect_part = ((expo(pmd_bc_sensitivity) * bc_cc_value * 2) >> 8);
+int fc_effect_part = ((expo(pmd_fc_sensitivity) * fc_cc_value * 2) >> 8);
+int pmd = (basic_part + mw_effect_part + bc_effect_part + fc_effect_part) >> 1;
+```
 ### AMD
-AMD1 and AMD2 are processed in the same way. "Basic" value found in VCED parameter `#57` is processed by `expo()` function then multiplied by current LFO delay effect value (`255` if no LFO delay or delay has expired), then 8 higher bits are used for further calculations. Then Modulation Wheel Amplitude Effect, Breath Controller Amplitude Effect and Foot Controller Amplitude Effect are added to previously processed AMD value. Each 'XXX Amplitude Effect' is calculated using the following formula:
+Both AMD1 and AMD2 are processed in the same way. "Basic" value found in VCED parameter `#57` is processed by `expo()` function then multiplied by current LFO delay effect value (`255` if no LFO delay or delay has expired), then 8 higher bits are used for further calculations. Then processed Modulation Wheel Amplitude Effect (VCED #72), Breath Controller Amplitude Effect (VCED #74) and Foot Controller Amplitude Effect (ACED #22) are added to previously processed AMD value. Each 'XXX Amplitude Effect' is calculated using the following formula:
 ```
 expo(XXX_amplitude_effect) * XXX_midi_cc_value * 2
 ```
-, then 8 higher bits are added to processed AMD value. If the resulting value exceeds 255 the value of 255 is used further. Next, the value is substracted from `0xff` and result is used as an index in `c_table_LFO` table. Finally, 7 higher bits are used as actual value written to OPZ register `0x17` or `0x19`. A pseudocode for this logic is as follows:
+, then 8 higher bits are added to processed AMD value. If the resulting value exceeds 255 the value of 255 is used further. Next, the value is substracted from `0xff` and result is used as an index in `c_table_LFO` table. Finally, 7 higher bits are used as actual value written to OPZ register `0x17` or `0x19` with highest bit set to `0`. A pseudocode for this logic is as follows:
 ```
 int basic_part = ((expo(basic_amd) * lfo_delay_effect) >> 8);
 int mw_effect_part = ((expo(amd_mw_sensitivity) * mw_cc_value * 2) >> 8);
