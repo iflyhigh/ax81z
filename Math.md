@@ -62,6 +62,7 @@ int c_table_LFO[] =
 ```
 
 ### Key code
+OPZ internally supports 96 notes, 12 notes per octave, 8 octaves total. Recognized MIDI note numbers are `13` to `108`, the following lookup table is used to match MIDI note numbers to OPZ note numbers. I.e., `opz_note_number = c_table_KEYCODE[(midi_note_number - 13)]`.
 ```
 int c_table_KEYCODE[] =
 {
@@ -78,7 +79,9 @@ int c_table_KEYCODE[] =
 	106, 108, 109, 110, 112, 113, 114, 116, 
 	117, 118, 120, 121, 122, 124, 125, 126
 };
-```				
+```
+Also OPM documentation uncovers the following details that appear to be similar with OPZ: register `0x28` has 3 higher bits for octave number and 4 lower bits for note number in octave. Note numbers in octave are `0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14`, octave numbers are `0` to `7`. So some simple math can be used for note number calculation, although TX81Z uses just the lookup table.
+
 ### PMD
 Both PMD1 and PMD2 are processed in the same way. "Basic" value found in VCED parameter `#56` is processed by `expo()` function then multiplied by current LFO delay effect value (`255` if no LFO delay or delay has expired), then 8 higher bits are used for further calculations. Then processed Modulation Wheel Pitch Effect (VCED `#71`), Breath Controller Pitch Effect (VCED `#73`) and Foot Controller Pitch Effect (ACED `#21`) are added to previously processed PMD value. Each 'XXX Pitch Effect' is processed using the following formula:
 ```
