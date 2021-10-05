@@ -110,7 +110,7 @@ int bc_effect_part = ((expo(amd_bc_sensitivity) * bc_cc_value * 2) >> 8);
 int fc_effect_part = ((expo(amd_fc_sensitivity) * fc_cc_value * 2) >> 8);
 int c_lfo_table_index = 0xff - (basic_part + mw_effect_part + bc_effect_part + fc_effect_part);
 if (c_lfo_table_index < 0) { c_lfo_table_index = 0; }		
-int amd = c_table_LFO_FREQ[c_lfo_table_index] >> 1;
+int amd = c_table_LFO[c_lfo_table_index] >> 1;
 ```
 ### KLS
 ```
