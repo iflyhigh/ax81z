@@ -127,6 +127,14 @@ int kvs = 1; // possible values 0..7
 int kvsLow = 0xFF - (0xF0 | (kvs << 1));
 int kvsHigh = 0xFF & (0x20 * kvs);
 ```
+### Pitch wheel
+First, a pitch bend range (VCED parameter `#64`) is converted using the following lookup table:
+```
+int c_table_PITCH_BEND_RANGE[] =
+{
+	16, 33, 49, 65, 81, 97, 113, 129, 145, 162, 178, 194   
+}
+```
 ### TL
 ```
 int c_table_BASIC_TL[] =
