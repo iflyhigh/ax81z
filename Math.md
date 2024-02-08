@@ -15,13 +15,13 @@ Assuming the VCED value is in `ACCA` register and result is also read from `ACCA
 
 ```
 int expo(int in) {
-    return 0xff & ((in * 165) >> 6);
+    return 0xFF & ((in * 0xA5) >> 6);
 }
 ```
 
 ### LFO
 
-LFO frequency (or speed as manual suggests) is calculated dependent on LFO waveform. For waveform `3` (Noise/Sample&Hold) the `expo()` function is used. For other waveforms the 256-byte lookup table accessed by `expo()` value of VCED parameter is used (i.e. `lfo_frequency = c_table_LFO[expo(VCED_LFO_freq)]`). 
+LFO frequency (or speed as manual suggests) is calculated dependent on LFO waveform. For waveform `3` (Noise/Sample&Hold) the `expo()` function is used (i.e. `lfo_frequency = expo(VCED_LFO_freq)`). For other waveforms the 256-byte lookup table accessed by `expo()` value of VCED parameter is used, value from table is substracted from 255 (i.e. `lfo_frequency = 255 - c_table_LFO[expo(VCED_LFO_freq)]`). 
 
 ```
 int c_table_LFO[] =
@@ -113,6 +113,7 @@ if (c_lfo_table_index < 0) { c_lfo_table_index = 0; }
 int amd = c_table_LFO[c_lfo_table_index] >> 1;
 ```
 ### KLS
+Possible values in VCDED are `0..99`, they are processed with `expo()` function. Incoming MIDI note number is mapped to OPZ note index (not note number, i.e. possible values are `0..95`!), corresponding OPZ note value (!) is retrieved from `c_table_KEYCODE` lookup table, then `14` is substracted from it, then divided by `4`, then mapped to a value via lookup table `c_table_KLS`, multiplied by processed (exponential) KLS value, and higher byte affects outpul level.
 ```
 int c_table_KLS[] =
 {
@@ -121,11 +122,55 @@ int c_table_KLS[] =
 	67,  80,  95,  113, 134, 160, 190, 224, 255
 };
 ```
-### KVS
+MIDI note numbers accepted are `13..108`. Pseudocode for calculations:
 ```
-int kvs = 1; // possible values 0..7
-int kvsLow = 0xFF - (0xF0 | (kvs << 1));
-int kvsHigh = 0xFF & (0x20 * kvs);
+int opz_note_index = midi_note_number - 13;
+int opz_note_value = c_table_KEYCODE[opz_note_index];
+int adjusted_opz_note_value = 0;
+if (opz_note_value >= 14) {
+	adjusted_opz_note_value = (opz_note_value - 14);
+}
+int kls_tl = (f_expo(kls) * c_table_KLS[adjusted_opz_note_value >> 2]) >> 8;
+```
+### KVS
+Possible valies in VCED are `0..7`. In case of `KVS == 0` zero output value is hardcoded, in other cases the following formula is used to determine two single-byte values `kvsHigh` and `kvsLow` (actually higher and lower bytes of calculated two-byte value):
+```
+int kvs; // possible values 1..7
+int kvsHigh = 0xFF - (0xF0 | (kvs << 1));
+int kvsLow = 0xFF & (0x20 * kvs);
+```
+|VCED KVS|kvsHigh|kvsLow|
+|----------|------|------|
+|0|`0x00`|`0x00`|
+|1|`0x0D`|`0x20`|
+|2|`0x0B`|`0x40`|
+|3|`0x09`|`0x60`|
+|4|`0x07`|`0x80`|
+|5|`0x05`|`0xA0`|
+|6|`0x03`|`0xC0`|
+|7|`0x01`|`0xE0`|
+KVS value affects how output TL depends from input note velocity. Input MIDI note velocity is processed using the lookup table `c_table_MIDI_VELOCITY`, i.e. `opz_note_velocity = c_table_MIDI_VELOCITY[midi_note_velocity]`:
+```
+int c_table_MIDI_VELOCITY[] =
+{
+	254, 192, 180, 174, 168, 162, 158, 152, 148, 144,
+	141, 138, 134, 130, 128, 125, 122, 119, 116, 114,
+	112, 109, 107, 105, 103, 101, 99,  97,  95,  93,
+	92,  90,  88,  86,  85,  83,  82,  81,  79,  78,
+	76,  75,  74,  72,  71,  70,  68,  67,  66,  65,
+	64,  63,  62,  60,  59,  58,  57,  56,  55,  54,
+	53,  52,  50,  49,  48,  47,  46,  45,  44,  43,
+	42,  41,  40,  39,  38,  37,  36,  35,  34,  33,
+	32,  31,  30,  29,  28,  27,  26,  26,  25,  24,
+	23,  22,  22,  21,  20,  19,  18,  18,  17,  16,
+	16,  15,  14,  14,  13,  12,  12,  11,  11,  10,
+	9,   9,   8,   7,   7,   6,   6,   5,   5,   4,
+	4,   3,   3,   2,   2,   1,   1,   0
+};
+```
+Calculated value is multiplied by `kvsHigh`, upper byte of resulting value is added to `kvsLow`, the result will be later used in TL calculations:
+```
+int kvs_tl = ((kvsLow * (c_table_MIDI_VELOCITY[midi_note_velocty])) >> 8) + kvsHigh
 ```
 ### Pitch wheel
 First, a pitch bend range (VCED parameter `#64`) is converted using the following lookup table:
@@ -136,22 +181,57 @@ int c_table_PITCH_BEND_RANGE[] =
 }
 ```
 ### TL
+Total level for each operator is calculated as `basic_tl + kvs_tl + kls_tl + algo_tl + master_volume`, the lower the TL value, the louder the sound is. If sum exceeds `127`, it is capped to `127`. In other words, KLS and KVS adjustments do LOWER operator volume. If VCED parameter `#87` (Operator enable) is set to 1, TL for such operator is set to `127`. 
+#### Basic TL
+Basic TL is VCED parameter `#10`, it is calculated using lookup table `c_table_BASIC_TL` in case VCED value is `20` or lower or as `99 - VCED_tl` in other cases.
 ```
 int c_table_BASIC_TL[] =
 {
 	127, 122, 118, 114, 110, 107, 104, 102, 100, 98,  
 	96,  94,  92,  90,  88,  86,  85,  84,  82,  81
 };
-
+```
+#### Algo TL
+There are 8 different FM operator algorythms in OPZ. In case when there are multiple carriers (algos `4..7`) their output levels are slightly reduced using the `c_table_TL_ALG` lookup table. Keep in mind that the table below has "natural" operator order `1-2-3-4` while VMEM (patch) uses `4-2-3-1` order and VCED uses `4-3-2-1` order.
+```
 int c_table_TL_ALG[][] =
 {
-	{0,   0,   0,   0},
-	{0,   0,   0,   0},
-	{0,   0,   0,   0},
-	{0,   0,   0,   0},	
-	{0,   0,   8,   8},
-	{0,  13,  13,  13},
-	{0,  13,  13,  13},
-	{16, 16,  16,  16}
+	{0,   0,  0,  0},
+	{0,   0,  0,  0},
+	{0,   0,  0,  0},
+	{0,   0,  0,  0},	
+	{8,   0,  8,  0},
+	{13, 13, 13,  0},
+	{13, 13, 13,  0},
+	{16, 16, 16, 16}
+};
+```
+#### Master volume
+Synth master volume also affects only carrier operators. The following lookup table can be used to choose arrpropriate operators:
+```
+int c_table_TL_ALG_MASTER[][] =
+{
+	{1, 0, 0, 0},
+	{1, 0, 0, 0},
+	{1, 0, 0, 0},
+	{1, 0, 0, 0},
+	{1, 0, 1, 0},
+	{1, 1, 1, 0},
+	{1, 1, 1, 0},
+	{1, 1, 1, 1}
+};
+```
+MIDI volume is processed using `c_table_MASTER_VOLUME` lookup table:
+```
+int c_table_MASTER_VOLUME[] =
+{
+	127, 112, 96,  86,  80,  74,  70,  67,  64,  61,  58,  56,  54,  52,  51,  49,  
+	48,  46,  45,  44,  42,  41,  40,  39,  38,  37,  36,  35,  35,  34,  33,  32,  
+	32,  31,  30,  29,  29,  28,  28,  27,  26,  26,  25,  25,  24,  24,  23,  23,  
+	22,  22,  21,  21,  20,  20,  19,  19,  19,  18,  18,  17,  17,  17,  16,  16,  
+	16,  15,  15,  14,  14,  14,  13,  13,  13,  12,  12,  12,  12,  11,  11,  11,  
+	10,  10,  10,  9,   9,   9,   9,   8,   8,   8,   8,   7,   7,   7,   7,   6,   
+	6,   6,   6,   5,   5,   5,   5,   4,   4,   4,   4,   4,   3,   3,   3,   3,   
+	2,   2,   2,   2,   2,   1,   1,   1,   1,   1,   1,   0,   0,   0,   0,   0
 };
 ```
